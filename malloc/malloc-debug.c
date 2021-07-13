@@ -357,8 +357,12 @@ strong_alias (__debug_calloc, calloc)
 size_t
 malloc_usable_size (void *mem)
 {
-  return (__is_malloc_debug_enabled (MALLOC_CHECK_HOOK)
-	  ? malloc_check_get_size (mem) : musable (mem));
+  if (__is_malloc_debug_enabled (MALLOC_MCHECK_HOOK))
+    return mcheck_usable_size (mem);
+  if (__is_malloc_debug_enabled (MALLOC_CHECK_HOOK))
+    return malloc_check_get_size (mem);
+
+  return musable (mem);
 }
 
 #define LIBC_SYMBOL(sym) libc_ ## sym
